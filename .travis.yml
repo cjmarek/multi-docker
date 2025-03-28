@@ -18,16 +18,13 @@ script:
 after success:
   - docker build -t multi-client ./client
   - docker build -t multi-nginx ./nginx
+  - docker build -t multi-server ./server
   - docker build -t multi-worker ./worker
-# instructions regarding deployment to AWS
-  deploy:
-  provider: elasticbeanstalk
-  region: "us-east-2"
-  app: "frontend"
-  env: "frontend-env"
-  bucket_name: "elasticbeanstalk-us-east-2-422540489366"
-  bucket_path: "frontend"
-  # anytime code makes it to the master branch, that is the time to deploy
-  on:
-    branch: master
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push stephengrider/multi-client
+  - docker push stephengrider/multi-nginx
+  - docker push stephengrider/multi-server
+  - docker push stephengrider/multi-worker
 
