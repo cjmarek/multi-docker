@@ -1,0 +1,33 @@
+# indentation matters or the yaml file won't work. He mentions that way way later on
+# This is used only as part of the CI/CD pipeline set up. I just decided to include
+# This anyway, but I never signed myself up with Travis
+# Anytime we are making use of Docker, we need to establish super user permissions
+sudo: required
+language: generic
+# will load a copy of docker into our running container
+services:
+  - docker
+# run commands before our test run, such as to build the Docker image
+before_install:
+  - docker build -t react-test -f ./client/Dockerfile.dev ./client
+# the commands that need to be executed to run the test suite
+# the key words -e CI=true, keeps the build progress from hanging 
+# on the test run feedback (regarding options you can do). We want travis to proceed
+script:
+  - docker run -e CI=true react-test npm test
+after success:
+  - docker build -t multi-client ./client
+  - docker build -t multi-nginx ./nginx
+  - docker build -t multi-worker ./worker
+# instructions regarding deployment to AWS
+  deploy:
+  provider: elasticbeanstalk
+  region: "us-east-2"
+  app: "frontend"
+  env: "frontend-env"
+  bucket_name: "elasticbeanstalk-us-east-2-422540489366"
+  bucket_path: "frontend"
+  # anytime code makes it to the master branch, that is the time to deploy
+  on:
+    branch: master
+
