@@ -1,5 +1,5 @@
 This project was created from scratch.
-So, to make it a brand new git repository, I run from the root folder 
+So, to make it a brand new git repository, I run from the root folder (C:\UdemyReactCourse3\CheckpointVersion2)
 git init
 git add .
 git commit -m "initial commit"
@@ -17,4 +17,14 @@ git remote -v
 
 git push origin master   or use the Visual Studio Code to push to GitHub.
 
-Next, create a link between GitHub and travis ci
+Next, create a link between GitHub and Travis CI
+
+
+* * * * * * * * * * 
+
+Since it costs money to sign up for Travis CI, he said a free way to get this stuff done
+is to use GitHub Actions. And then he never explains how. All he does is mention that there
+is a deploy.yaml file that performs the steps. And that deploy.yaml is in .GitHub > workflows > deploy.yaml
+
+
+

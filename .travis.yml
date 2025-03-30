@@ -16,17 +16,17 @@ before_install:
 script:
   - docker run -e CI=true react-test npm test
 after success:
-  - docker build -t multi-client ./client
-  - docker build -t multi-nginx ./nginx
-  - docker build -t multi-server ./server
-  - docker build -t multi-worker ./worker
+  - docker build -t cjmarek/my-first-repo:multi-client ./client
+  - docker build -t cjmarek/my-first-repo:multi-nginx ./nginx
+  - docker build -t cjmarek/my-first-repo:multi-server ./server
+  - docker build -t cjmarek/my-first-repo:multi-worker ./worker
   # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # Take those images and push them to docker hub
-  - docker push multi-client
-  - docker push multi-nginx
-  - docker push multi-server
-  - docker push multi-worker
+  - docker push cjmarek/my-first-repo:multi-client
+  - docker push cjmarek/my-first-repo:multi-nginx
+  - docker push cjmarek/my-first-repo:multi-server
+  - docker push cjmarek/my-first-repo:multi-worker
 
 deploy:
 provider: elasticbeanstalk
