@@ -15,16 +15,17 @@ jobs:
       - run: docker run -e CI=true  react-test npm test
 
 
-      - run: docker build -t cjmarek/my-first-repo:multi-client ./client
-      - run: docker build -t cjmarek/my-first-repo:multi-nginx ./nginx
-      - run: docker build -t cjmarek/my-first-repo:multi-server ./server
-      - run: docker build -t cjmarek/my-first-repo:multi-worker ./worker
+      - run: docker build -t cjmarek/multi-client ./client
+      - run: docker build -t cjmarek/multi-nginx ./nginx
+      - run: docker build -t cjmarek/multi-server ./server
+      - run: docker build -t cjmarek/multi-worker ./worker
   # Take those images and push them to docker hub
-      - run: docker push cjmarek/my-first-repo:multi-client
-      - run: docker push cjmarek/my-first-repo:multi-nginx
-      - run: docker push cjmarek/my-first-repo:multi-server
-      - run: docker push cjmarek/my-first-repo:multi-worker
+      - run: docker push cjmarek/multi-client
+      - run: docker push cjmarek/multi-nginx
+      - run: docker push cjmarek/multi-server
+      - run: docker push cjmarek/multi-worker
 
+      #  this stuff is for deploying to AWS
       # - name: Generate deployment package
       #   run: zip -r deploy.zip . -x '*.git*'
 

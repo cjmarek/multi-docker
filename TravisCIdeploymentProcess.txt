@@ -1,13 +1,13 @@
 Travis CI deployment process. Build pipeline.
 
 Anytime that we make a change to our GitHub Repository, Travis is going to
-automatically pull down our giHub repo, and build out a new set of production images
+automatically pull down our gitHub repo, and build out a new set of production images
 and push them off to DockerHub.
 
 So how are we going to use these images and actually deploy them, in production.
 For that we are going to be using amazon elastic beanstalk.
 
-Back when we has a single docker container in our prior project, there was stuff going on automatically
+Back when we had a single docker container in our prior project, there was stuff going on automatically
 behind the scenes when we passed our code over to elastic beanstalk. We didn't have to put together any 
 custom configuration or anything to tell elastic beanstalk that it needs to take this docker file and build it and 
 run the image that comes out of that. That was an automated process. We simply took our project directory

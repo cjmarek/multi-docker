@@ -1,0 +1,34 @@
+
+Anytime that we make a change to our GitHub Repository: 
+
+git push origin master
+
+gitHub Actions is going to automatically use the deploy.yaml file in my project root, (.GitHub\workflows)
+to pull down our gitHub repo, 
+
+and build out a new set of production images (there will be a production Dockerfile in each of the project folders ( ./client, ./nginx, ./server, ./worker)
+
+
+      - run: docker build -t cjmarek/my-first-repo:multi-client ./client
+      - run: docker build -t cjmarek/my-first-repo:multi-nginx ./nginx
+      - run: docker build -t cjmarek/my-first-repo:multi-server ./server
+      - run: docker build -t cjmarek/my-first-repo:multi-worker ./worker
+
+When you visit the  GitHub Actions page on GitHub, you will see the build process in progress.
+
+Any failures to build will result is a huge diagnostic log file at the GitHub Actions page.
+Otherwise, for a successful process, just a green check mark will be on the GitHub Actions page.
+
+
+
+and push them off to DockerHub.
+
+      - run: docker push cjmarek/my-first-repo:multi-client
+      - run: docker push cjmarek/my-first-repo:multi-nginx
+      - run: docker push cjmarek/my-first-repo:multi-server
+      - run: docker push cjmarek/my-first-repo:multi-worker
+
+
+
+
+
