@@ -14,7 +14,7 @@ jobs:
       - run: docker build -t react-test -f ./client/Dockerfile.dev ./client
       - run: docker run -e CI=true  react-test npm test
 
-
+  # These names are incorrect, (somehow), they should be cjmarek/multi-client
       - run: docker build -t cjmarek/my-first-repo:multi-client ./client
       - run: docker build -t cjmarek/my-first-repo:multi-nginx ./nginx
       - run: docker build -t cjmarek/my-first-repo:multi-server ./server

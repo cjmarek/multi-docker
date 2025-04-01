@@ -52,10 +52,10 @@ const pgClient = new Pool({
   database: keys.pgDatabase,
   password: keys.pgPassword,
   port: keys.pgPort,
-  ssl:
-    process.env.NODE_ENV !== 'production'
-      ? false
-      : { rejectUnauthorized: false },
+  // ssl:    lecture Setcion 14 said to remove this.
+  //   process.env.NODE_ENV !== 'production'
+  //     ? false
+  //     : { rejectUnauthorized: false },
 });
 
 //event handler for all errors
