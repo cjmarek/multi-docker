@@ -143,7 +143,7 @@ app.post('/values', async (req, res) => {
     return res.status(422).send('index too high');
   }
 
-  //The only other place that does a write to the redis datbase is in the worker, and uses this very synatx.
+  //The only other place that does a write to the redis database is in the worker, and uses this very syntax.
   //The purpose of this is to have something in the redis database the first time we run the application
   //so that there is something to put on the screen.
   //put index into redis data store, will replace the 'Nothing yet' 

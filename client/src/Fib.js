@@ -29,12 +29,15 @@ class Fib extends Component {
   // }
 
   //Where are these being saved and held permanently from session to session?
+  // Somewhere in the container is where. So called in memory data.
+  //If ever you delete the container, you get a new database.
   async fetchValues() {
     const values = await axios.get('/api/values/current');
     this.setState({ values: values.data });
   }
 
-  //Where are these being save and held?
+  //Where are these being save and held?  Somewhere in the container is where.
+  //If ever you delete the container, you get a new database.
   async fetchIndexes() {
     const seenIndexes = await axios.get('/api/values/all');
     this.setState({ seenIndexes: seenIndexes.data });
@@ -54,6 +57,8 @@ class Fib extends Component {
     });
     debugger;
     //see ConsoleLogFromReactApp.png for where this console log output went to.
+    //The Express server at line 167 of index.js   res.send({ working: true });
+    //So that is where we get working: true back here as a response.
     console.log(`The response came back as ${response.data} * * * * * * * * * * `)
     this.setState({ index: '' });
   };
