@@ -13,7 +13,7 @@ const cors = require('cors');
 //                     these values actually are being set in the docker-compose.yml
 console.log("* * * * * * * * * * * * * * * * * * * * * * console logs * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
 console.log(`PostgreSQL redisHost: ${keys.redisHost}`);
-console.log(`PostgreSQL redisPORT: ${keys.redisPORT}`);
+console.log(`PostgreSQL redisPort: ${keys.redisPort}`);
 console.log(`PostgreSQL pgUser: ${keys.pgUser}`);
 console.log(`PostgreSQL pgHost: ${keys.pgHost}`);
 console.log(`PostgreSQL pgPort: ${keys.pgPort}`);
@@ -42,7 +42,9 @@ app.use(cors());
 app.use(bodyParser.json());
 
 //* * * * * * * * * * * * * * * * * * * * * * * * * * * * * Postgress Client Setup, 
-// 
+//Section 8: Building a Multi-Container Application
+//110. Important update for pgClient and Table Query 
+//
 // to allow comunication with the Express Server 
 // Postgres is a sql type database very similar to mySql
 const { Pool } = require('pg');
@@ -52,7 +54,7 @@ const pgClient = new Pool({
   database: keys.pgDatabase,
   password: keys.pgPassword,
   port: keys.pgPort,
-  // ssl:    lecture Setcion 14 said to remove this.
+  // ssl:    //lecture Section 14 said to remove this.
   //   process.env.NODE_ENV !== 'production'
   //     ? false
   //     : { rejectUnauthorized: false },

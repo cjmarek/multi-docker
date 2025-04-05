@@ -15,6 +15,7 @@ jobs:
       - run: docker run -e CI=true  react-test npm test
 
   # Reminder, the ./client tells docker where to look for the Dockerfile since we are not in that folder here, we are in .github/workflows here
+  # April 4 I am noticing that these are building using the production Dockerfile and not the Dockerfile.dev. Those make for more compact image sizes.
       - run: docker build -t cjmarek/multi-client ./client
       - run: docker build -t cjmarek/multi-nginx ./nginx
       - run: docker build -t cjmarek/multi-server ./server

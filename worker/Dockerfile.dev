@@ -4,5 +4,6 @@ WORKDIR '/app'
 COPY ./package.json ./  
 RUN npm install
 COPY . .
-# default commands that we always use for applications created from React App
+
+# for some reason he says to use nodemon for the develompnet server 122 Dockerizing Geneic Node Apps video 1:17
 CMD ["npm", "run", "dev"]
