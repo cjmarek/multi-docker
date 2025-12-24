@@ -1,0 +1,49 @@
+****** Point of confusion ********
+During the various lectures, I have seen him perform 
+
+docker build -f Dockerfile.dev .
+
+And then at completion, he says we have a container id???? WTF
+I thought we were getting an image id as a result of docker build -f Dockerfile.dev .
+
+I thought that after running docker build -f Dockerfile.dev ., you get an image Id and then next you create a container from that image
+
+docker run -p 8080:8081 [image id]
+
+But Grider on more than one occasion says we have a container id that came out of the build!  WTF
+
+see the video Section 9: "Dockerizing" Multiple Services at 4:52
+
+I notice that my dockerfile.dev has six steps, but for some reason, the sixth step does not appear in the terminal logs for me.
+I only see 5 steps. Grider shows 6 steps when he executes. He must be getting a running container, but I am not.
+
+FROM node:lts-alpine
+WORKDIR '/app'
+COPY ./package.json ./
+RUN npm install
+COPY . .
+CMD ["npm", "run", "start"]  <--- I think Grider gets his step to happen automatically????
+
+In my case, I must use docker run, and doing that will kick off the container from the image.
+
+I have a image Id after execution cdb32aa400cf25ae047b9b35a5ff147156363c78cfe13c2a03c127f11b93712b
+
+
+docker run cdb32aa400cf25ae047b9b35a5ff147156363c78cfe13c2a03c127f11b93712b
+
+And now I have a container 
+
+At 5:56 He literally says, now lets try starting this up by running docker run with the 'container id'
+
+HE MUST BE MISTAKENLY CALLING THE IMAGE ID THE CONTAINER ID since the instruction he is using is
+
+ docker run [image id]
+
+That is exactly what he is saying. Wow, so confusing!!!!!
+
+at 122 Dockerizing Generic Node Apps video  2:42 he says it correctly
+
+
+
+
+ 

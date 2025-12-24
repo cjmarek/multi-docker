@@ -4,4 +4,7 @@ WORKDIR "/app"
 COPY ./package.json ./
 RUN npm install
 COPY . .
+# inside the package.json is where nodemon is found mentioned
+# for some reason he says to use nodemon for the development server 122 Dockerizing Generic Node Apps video 1:17
+# nodemon is a command line tool that can be used to automatically reload the entire project anytime source code in the project changes, and then restart the web app
 CMD ["npm", "run", "dev"]

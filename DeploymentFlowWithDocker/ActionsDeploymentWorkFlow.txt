@@ -1,0 +1,35 @@
+The idea for deploying with GitHub Actions and Docker.
+
+NOTE: I am not a paying subscriber to Travis CI. I chose to use GitHub Actions instead.
+
+This flow is similar to how Travis will work.  
+
+
+Use Actions to run unit tests, and if the unit tests pass, merge feature branch with master.
+
+Use Actions to deploy the images to AWS
+
+
+Deploy.yml is going to instruct GitHub Actions how to handle our build when we push our code up to GitHub.
+
+Now that we have production versions (Dockerfile(s)) of all our sub projects (client, nginx, server, worker) put together
+
+1) Create a new Git repository from inside of Complex directory. I am using CHECKPOINT206 as my directory for my git repository
+2) Create a new GitHub repository out on GitHub.com
+3) Actions will use the deploy.yml file to run the GitHub repo as a build to create the images.
+4) To kick off the process, you just need to do a commit of your repo up to GitHub. push origin master, Then Actions will run the project and attempt to build the images.
+5) Actions will push the images to Docker hub
+6) Actions will invoke the AWS side for deployment of the Docker Images to production by sending Dockerrun.aws.json back to amazon elastic beanstalk.
+
+The Section 11:Multi-Container Deployments to AWS is insane to watch and expect to retain any understanding of. And since I don't have a
+subscription to AWS, whats the point of trying. Seems to me that there should be a AWS specialist on  the team that can do this stuff.
+
+
+
+
+
+
+When you do any GitHub repo commit, you need to go over to Actions CI and you will see the build process start up and then push the images to Docker hub.
+
+The entire process of hooking up Travis CI, of running our tests, of deploying with elastic beanstalk, Docker was not required for any of that.
+He says we could have done all this by using shell scripts and completely ignored Docker. He says we used Docker because it made setting up all this stuff easier.

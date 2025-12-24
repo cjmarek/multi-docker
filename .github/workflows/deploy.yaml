@@ -1,3 +1,4 @@
+# The first time I heard anything about GitHub Actions was at Section 7: Continuous Integration and Deployment with AWS. 86: GitHub Actions Instead of Travis CI
 name: Deploy MultiDocker
 on:
   push:
@@ -26,7 +27,11 @@ jobs:
       - run: docker push cjmarek/multi-server
       - run: docker push cjmarek/multi-worker
 
-      #  this stuff is for deploying to AWS
+      #  This stuff (line 35 down) is for deploying to AWS. I found this shit by clicking a link I
+      #  found at at Section 7: Continuous Integration and Deployment with AWS. 86: GitHub Actions Instead of Travis CI . . . .
+      # https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/learn/lecture/11437142#questions/17673926
+      #  After you go to the link, you have to scroll down! to find this information.
+      
       # - name: Generate deployment package
       #   run: zip -r deploy.zip . -x '*.git*'
 

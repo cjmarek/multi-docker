@@ -1,0 +1,107 @@
+How to think about port mapping
+
+
+3050:80   means that an outside port of 3050 will be able to connect with a server that is listening on port 80 (which happens to be nginx)
+
+We did such a mapping with our docker-compose.yml file in Complex so that 
+ Since nginx is the web server, that then is the start of everything. So we use https://localhost:3050 to kick off the web application.
+ In the Docker-compose file, we decided the outside Port to be 3050 and then we map it (here) to Port 80 to perform the routing rules 
+ defined for nginx that is listening on port 80 
+
+    ports:
+      - '3050:80'
+
+
+
+
+React by default is already listening on port 3000.
+
+
+When ever I start up my development server for my photography React web site, I type 'npm run start'
+
+And I get the following output at the terminal. . . 
+
+You can now view photography in the browser.
+
+  Local:            http://localhost:3000
+  On Your Network:  http://10.6.19.43:3000
+
+
+So this MUST MEAN that for my React stuff, the port mapping is done automatically behind the scenes as 3000:3000
+There can be no other answer. 
+It is telling me here, hey, I have internally mapped localhost:3000 to React port 3000
+so you must use http://localhost:3000 to bring up your application.
+Anything other than http://localhost:3000 will not work.
+
+Also, regarding what I said above, see the video at Section 6 Creating a production grade Workflow, 67 Starting the container 0:57
+
+
+
+In the Complex project, nginx is being used in two places in the network.
+
+both nginx servers always uses a default.conf that defines route rules.
+
+The client side nginx server default.conf only has a single route rule for invoking React when we are at a root route '/', and listens on container port 3000.
+
+The root side nginx server default.conf only has two route rules:
+1) for invoking React when we are at a root route '/', and listens on port container 80.
+2) for invoking Express when we are at a root route '/api', and listens on container port 80.
+
+I do not know how the outside port is determined for the execution in production!
+
+In development, we are using 3050 as the outside port, and mapping 3050 to 80, so localhost:3050 is used when doing a development start up from the browser.
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+A bit more discussion. . . .
+
+Section 4: Making Real Projects with Docker
+37. Node Server Setup
+
+
+//node.js server logic setup for the simple web application is as follows
+
+
+//* * * * * * * starts here
+
+const express = require('express');
+
+const app = express();
+
+//this is the route handler. For when somebody visits the root route of our application.
+app.get('/', (req, res) => {
+    res.send('Hi there');
+});
+
+
+//This is where we define the container port to listen on for requests coming from outside. docker run -p fooo:8085 cjmarek/simpleweb
+app.listen(8085, () => {
+    console.log('I needed to find an available port for my Node application to listen on, I used port 8085');
+});
+
+//* * * * * * * ends here
+
+If we execute the container with this port mapping . . .
+     docker run -p 8084:8085 cjmarek/simpleweb  
+So now, localhost:8084 will forward requests to port 8085, 
+ and port 8085 will recognize the root route '/'
+and I will see 'hi there' at the browser.
+
+
+
+
+Note, you must determine what the outside port is by the way you issue the docker run statement
+      docker run -p fooo:8085 cjmarek/simpleweb
+ so, localhost:fooo/    satisfies the declaration of the outside port, and also the route we are using to be '/'
+
+
+See PortMapping.png
+
+
+
+
+
+
+
+
+

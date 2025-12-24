@@ -1,11 +1,14 @@
+
+//Since json won't let me make comments in it, I created a txt version of Dockerrun.aws.json so I could make comments
+
 {
     "AWSEBDockerrunVersion": 2,
     "containerDefinitions": [
         {
             "name": "client",
-            "image": "cjmarek/multi-client",
+            "image": "cjmarek/multi-client",     this is the image name that exists out on Docker hub that AWS will be looking for to use as the basis for this container
             "hostname": "client",
-            "essential": false,
+            "essential": false,  this means, don't crash the system if this one has a problem
             "memory": 128
         },
         {
@@ -26,7 +29,7 @@
             "name": "nginx",
             "image": "cjmarek/multi-nginx",
             "hostname": "nginx",
-            "essential": true,
+            "essential": true, this means, if this one has a problem then shut everything down. NOTE. there must always be at least one essential container
             "portMappings": [
                 {
                     "hostPort": 80,
@@ -38,3 +41,9 @@
         }
     ]
 }
+
+
+
+
+
+Grider recommends that after you finish writing or editing any json file like this one, go online and find a json validator to ensure that your json is good.

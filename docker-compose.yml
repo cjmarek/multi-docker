@@ -1,4 +1,5 @@
 # yml file is used to invoke more than one container from a central configuration
+# This yml file is a way to automate the mundane chore of entering Docker commands, arguments, port settings from a terminal, by doing them here.
 # indentation is critically important or it will fail.
 # doing this from one yml file puts all these containers on the same network automatically
 # version is required. need to mention the version of docker compose
@@ -24,18 +25,21 @@ services:
     build:
       dockerfile: Dockerfile.dev
       context: ./nginx
+    # localhost 3050 will be reaching port 80 on nginx (see default.conf).
     ports:
       - '3050:80'
   apifoo:
+    #ports:
+    # - '3050:5000'
     build:
       dockerfile: Dockerfile.dev
       # this 'context' approach is telling compose where to look for Dockerfile.dev, because the compose.yml file is out at the root of the project, and we need to tell it where to look
       context: ./server   # path for the api service, use server folder as the current working directory for all the source code and also the Dockerfile.dev to build this image.
     volumes:              # volumes give us a way to avoid needing to perform builds each time we change source code, by mapping those changes over to the temporary container
-                          # no mapping to be performed even if something changes in the node_modules, (as a result of npm install) in fact there is no node_modules in the current working directory to map to for all these services
+      # no mapping to be performed even if something changes in the node_modules, (as a result of npm install) in fact there is no node_modules in the current working directory to map to for all these services
       - /app/node_modules # inside the container, don't try to overide, leave this folder as is in the container. (when you don't see ':' that means you are not mapping to anything outside the container)
       - ./server:/app     # if anything inside the current working server directory has changed, it will be automatically reflected inside the app folder of the container, so no need to rebuild the image
-      # These default values came from the documentation out on Docker hub for the postgres repository and redis repository.
+    # These default values came from the documentation out on Docker hub for the postgres repository and redis repository. The actuall environment settings were defined in server>keys.js
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
@@ -48,8 +52,8 @@ services:
     build:
       dockerfile: Dockerfile.dev
       context: ./client
-    volumes: # volumes give us a way to avoid needing to perform builds each time we change source code, by mapping those changes over to the temporary container
-      - /app/node_modules 
+    volumes:  # volumes give us a way to avoid needing to perform builds each time we change source code, by mapping those changes over to the temporary container
+      - /app/node_modules # no building to be performed even if something changes in the node_modules, (as a result of nmp install) in fact there is no node_modules in the current working directory for any of these services
       - ./client:/app   # everything inside the client directory should be shared with the app folder inside the container
     # this is to fix a bug
     environment:
@@ -58,11 +62,12 @@ services:
     build:
       dockerfile: Dockerfile.dev
       context: ./worker
-    volumes:   # volumes give us a way to avoid needing to perform builds each time we change source code, by mapping those changes over to the temporary container
+    volumes:   # volumes give us a way to avoid needing to perform builds each time we change source code, by mapping those source changes over to the temporary container
       - /app/node_modules # no building to be performed even if something changes in the node_modules, (as a result of nmp install) in fact there is no node_modules in the current working directory for any of these services
       - ./worker:/app # map all of the source files and folders to the temporary container app folder to prevent needing to rebuild upon changes to the source (see Dockerfile.dev for setups)
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-# Notice that there is no port mapping going on anywhere in this compose file. So the browser can not connect to any of the servers that are in this yml. Port mapping will happen from the nginx folder
-# We added Port mapping for the nginx folder, 3050:80 where the 80 represents the container port and 3050 is the outside port http://localhost:3050 (do not use https)
+# Notice With the exception of container nginx, there is no port mapping going on in this compose file. So the browser can not connect to any of the servers that are in this yml. Port mapping will happen from the nginx > default.conf
+# We added Port mapping for the nginx folder, 3050:80 where the 80 represents the nginx container port and 3050 is the outside port http://localhost:3050 (do not use https)
+#  see    bottom of   ------> Complex-Checkpoint.png <-------

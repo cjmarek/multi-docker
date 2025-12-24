@@ -1,13 +1,13 @@
-//This is node js javascript code
+//This is node js javascript code. All that happens here is that the index comes here and is converted to fibinaci value and then is saved to Redis.
 
 //connection keys he called them
 const keys = require('./keys');
 //import a redis client 
 const redis = require('redis');
 
-//We are only using Redis in the worker container
+//We are only using Redis in the worker container (unlike the Express server that uses both Redis and Postgres in the same container)
 
-//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * Redis Client Setup
+//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * Redis Client Setup * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 const redisClient = redis.createClient({
   host: keys.redisHost,
@@ -31,18 +31,21 @@ function fib(index) {
   return fib(index - 1) + fib(index - 2);
 }
 
-//this is an event handler (.on)
-//anytime we get a new value, that shows up in redis run this callback function
+//This is an event handler (.on)
+//anytime we get a new value, that shows up in redis, run this callback function
 //to calculate a new fib value and insert that into a hash (.hset) of values in redis.
 //message is the index value that was submitted into the form
+//This is storing redis data as an object called values...
+//  values: { 1:1, 2:2, 3:3, 4:5, 5:8, 6:13 ... }
+//  where the key to each property is message and the value of each property is fib(parseInt(message))
 redisPublisher.on('message', (channel, message) => {
   console.log(`redisClient event handler for insert : ${message}`);
   redisClient.hset('values', message, fib(parseInt(message)));
-});
+}); //Re-entering identical indexs only replaces the identical property key with the same value in the Redis object.
 
-//At Line 138 index.js  of the server container is what fires (publishes) this event
-//register event that listens for insert ()
-//'insert' could just as well be 'foo'
+//At Line 161 index.js  of the server container is what fires (publishes) this 'insert' event.
+//register event that listens for insert ().
+//'insert' could just as well be 'foo'. Fucking mind twisting that this brings line 41 (above) into action??? WTF
 redisPublisher.subscribe('insert');
 
 //NOTE you can do a sanity check of this code by returning to the terminal window for this directory and run 'node index.js'

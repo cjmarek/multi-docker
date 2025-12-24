@@ -16,11 +16,16 @@ before_install:
 script:
   - docker run -e CI=true react-test npm test
 after success:
+  # build images 
   - docker build -t cjmarek/my-first-repo:multi-client ./client
   - docker build -t cjmarek/my-first-repo:multi-nginx ./nginx
   - docker build -t cjmarek/my-first-repo:multi-server ./server
   - docker build -t cjmarek/my-first-repo:multi-worker ./worker
   # Log in to the docker CLI
+  # These credentials were established a long time ago when we first installed docker. I have the username and password in my PHONES.txt.
+  # That means our docker client is already associated with our docker hub account.
+  # So for any images we pushed to docker hub, those images are already associated to my account.
+  # To supply $DOCKER_PASSWORD" "$DOCKER_ID" from the following command line, You will set these up as environmental variables on the Travis site.
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # Take those images and push them to docker hub
   - docker push cjmarek/my-first-repo:multi-client
@@ -28,6 +33,8 @@ after success:
   - docker push cjmarek/my-first-repo:multi-server
   - docker push cjmarek/my-first-repo:multi-worker
 
+# This only kicks in whenever the MASTER branch is updated, commits to any feature branch have no effect. Pull requests that succeed to merge to master get us here
+# Grider did a push origin master only to demonstrate getting here by updating the master branch that way.
 deploy:
 provider: elasticbeanstalk
 region: "us-east-1"

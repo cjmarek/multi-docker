@@ -1,0 +1,19 @@
+If you want to see console.log output from Non web site containers they only show up at the terminal. They do not show up in the Chrome Dev tools console.
+
+
+To search for any console.logs, I must cut and paste the logs that cascade at the terminal, into a notepad document, and then search
+for whatever I am looking for that way.
+
+
+However, for websites such as React webSites, the console.log output from a web site will only show up in the Chrome Dev tools console.
+
+
+
+This is where my images get saved to Docker hub  https://hub.docker.com/repositories/cjmarek
+
+hub.docker.com
+Docker Hub
+Docker ID  cjmarek
+email cjmarek1@gmail.com
+Password ChrisIsGr8!
+

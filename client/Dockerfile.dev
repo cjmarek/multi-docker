@@ -6,4 +6,4 @@ RUN npm install
 COPY . .
 # default commands that we always use for applications created from React App
 # Default start command, will start up a development server. So that is why this is not a good thing for a production environment
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start"] 
