@@ -48,6 +48,12 @@ redisPublisher.on('message', (channel, message) => {
 //'insert' could just as well be 'foo'. Fucking mind twisting that this brings line 41 (above) into action??? WTF
 redisPublisher.subscribe('insert');
 
+//NOTE: There is nothing like this being done for the Worker, like is happenning for React (3000 by default)
+// or for server (Express) So when it comes time to set up a cluster-ip-service for Worker, THERE IS NO cluster-ip-service
+// app.listen(5000, (err) => {
+//   console.log("Listening");
+// });
+
 //NOTE you can do a sanity check of this code by returning to the terminal window for this directory and run 'node index.js'
 // I just realized that when you use npm start, it is the package.json that maps 'start' to 'node index.js', so that on the 
 // terminal prompt, you can just type 'node index.js' instead of npm start.

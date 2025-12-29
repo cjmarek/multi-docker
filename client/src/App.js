@@ -11,7 +11,7 @@ function App() {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Fib Calculator version 2</h1>
+          <h1 className="App-title">Fib Calculator version 5</h1>
           <p></p>
           <a
             className="App-link"
@@ -19,7 +19,7 @@ function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Learn React again
+            Learn React again!
           </a>
           <Link to="/">Home</Link>
           <Link to="/otherpage">Other Page</Link>

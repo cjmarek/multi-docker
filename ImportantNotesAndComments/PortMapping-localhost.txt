@@ -1,0 +1,17 @@
+I just found out that whenever you say localhost:3000, the 3000 mentioned here is in fact the port of the 'thing' that you are running, 
+such as a React application. Until now, I was unsure if the 3000 was just the so called outside port, that was paired up with the default 
+port 3000 that React has. 
+As it turns out, localhost can also be written as 172.0.0.1, and you can do 172.0.0.1:3000. So 172.0.0.1 is the outside port. (also known as a I.P address).
+
+This discovery came from lecture Section 13: Maintaining Sets of containers with Deployments, 198 Why use services video at 3:29
+
+An even bigger clue is what you see when you start up a React application
+
+When ever I start up my development server for my photography React web site, I type 'npm run start'
+
+And I get the following output at the terminal. . . 
+
+You can now view photography in the browser.
+
+  Local:            http://localhost:3000
+  On Your Network:  http://10.6.19.43:3000   <--------------------  dumb ass

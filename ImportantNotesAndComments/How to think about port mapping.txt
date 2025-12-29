@@ -26,10 +26,9 @@ You can now view photography in the browser.
   Local:            http://localhost:3000
   On Your Network:  http://10.6.19.43:3000
 
+You must read PortMapping-localhost.txt
 
-So this MUST MEAN that for my React stuff, the port mapping is done automatically behind the scenes as 3000:3000
-There can be no other answer. 
-It is telling me here, hey, I have internally mapped localhost:3000 to React port 3000
+It is telling me here, hey, I have mapped localhost to React port 3000
 so you must use http://localhost:3000 to bring up your application.
 Anything other than http://localhost:3000 will not work.
 
@@ -62,7 +61,7 @@ Section 4: Making Real Projects with Docker
 //node.js server logic setup for the simple web application is as follows
 
 
-//* * * * * * * starts here
+//* * * * * * * start here
 
 const express = require('express');
 
@@ -79,7 +78,7 @@ app.listen(8085, () => {
     console.log('I needed to find an available port for my Node application to listen on, I used port 8085');
 });
 
-//* * * * * * * ends here
+//* * * * * * * end here
 
 If we execute the container with this port mapping . . .
      docker run -p 8084:8085 cjmarek/simpleweb  

@@ -1,3 +1,5 @@
+# this is the production version. But as luck would have it, there is barely a difference between the dev version and this one.
+# only the CMD statement is different.
 FROM node:16-alpine
 
 WORKDIR '/app'

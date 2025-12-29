@@ -119,6 +119,38 @@ app.get('/values/all', async (req, res) => {
   res.send(values.rows);
 });
 
+
+app.delete('/values/deletepostgres', async (req, res) => {
+  console.log(`PostgreSQL arrived at /values/deletepostgres`);
+  const query = 'DELETE FROM values';
+  //const query2 = 'TRUNCATE TABLE values';    don't get a row count with this one
+  // Assuming you have a PostgreSQL client connected and available as 'client' or a 'pool'
+  await pgClient.query(query, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error deleting rows');
+    } else {
+      console.log(`Deleted all rows from table_name. Affected rows: ${result.rowCount}`);
+      res.status(200).send('All rows deleted successfully');
+    }
+  });
+});
+
+app.delete('/values/deleteredis', async (req, res) => {
+  console.log(`Redis arrived at /values/deleteredis`);
+
+  await redisClient.flushdb(function (err, succeeded) {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error flushing database');
+    } else {
+      console.log('Redis database flushed successfully:', succeeded);
+      res.status(200).send('Redis database flushed successfully:');
+    }
+  });
+});
+
+
 //The React app made a http request to  axios.get('/api/values/current'), that got intercepted by nginx, which then stripped off 'api' and that gets us here
 app.get('/values/current', async (req, res) => {
   console.log(`redisClient arrived at /values/current`);

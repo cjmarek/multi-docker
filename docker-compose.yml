@@ -1,11 +1,12 @@
-# yml file is used to invoke more than one container from a central configuration
+# yml file is used to invoke more than one container from a central configuration.
 # This yml file is a way to automate the mundane chore of entering Docker commands, arguments, port settings from a terminal, by doing them here.
 # indentation is critically important or it will fail.
-# doing this from one yml file puts all these containers on the same network automatically
+# Doing this from one yml file puts all these containers on the same network automatically
 # version is required. need to mention the version of docker compose
 # He mentions that redis is a database, and postgres is a database
 # Notice how we do not have a Dockerfile for 'postgres:latest' or 'redis:latest'. We are taking them directly from Docker hub.
 # see Complex-Checkpoint.png
+#               This particular docker-compose.yml file is set up to be doing stuff that is only suitable to be done in a development context (volumes, Docker.dev etc)
 version: '3'
 # a service is synonymous with container
 services:
@@ -25,7 +26,7 @@ services:
     build:
       dockerfile: Dockerfile.dev
       context: ./nginx
-    # localhost 3050 will be reaching port 80 on nginx (see default.conf).
+    # localhost 3050 will be reaching port 80 on nginx (see default.conf). ports mentioned in this compose file determine the mapping. ports mentioned when using 'docker run -p 3050:80 [image id]' determine the mapping.
     ports:
       - '3050:80'
   apifoo:
@@ -39,7 +40,13 @@ services:
       # no mapping to be performed even if something changes in the node_modules, (as a result of npm install) in fact there is no node_modules in the current working directory to map to for all these services
       - /app/node_modules # inside the container, don't try to overide, leave this folder as is in the container. (when you don't see ':' that means you are not mapping to anything outside the container)
       - ./server:/app     # if anything inside the current working server directory has changed, it will be automatically reflected inside the app folder of the container, so no need to rebuild the image
-    # These default values came from the documentation out on Docker hub for the postgres repository and redis repository. The actuall environment settings were defined in server>keys.js
+    # These default values came from the documentation out on Docker hub for the postgres repository and redis repository. 
+    # The actual environment settings were defined in server>keys.js, 
+    # So, for example in the keys.js file, where you see process.env.REDIS_HOST, we are setting process.env.REDIS_HOST to be redis (fyi we got redis from line 17)
+    # in the keys.js file, where you see process.env.REDIS_PORT, we are setting process.env.REDIS_PORT to be 6379  etc etc. He pull out of thin air the rest of these by saying they are defaults WTF
+    # The values come from here and go over there.
+    # These default values came from the documentation out on Docker hub for the postgres repository and redis repository. The actual environment settings were defined in server>keys.js
+    # Grider got these values over in the docker hub documentation (some of them he actually could not find, and just flat out said them out loud)
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379

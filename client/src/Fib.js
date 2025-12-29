@@ -14,10 +14,11 @@ class Fib extends Component {
     index: '',
   };
   //kicks in the instant the Fib component is rendered on the screen. Fetch some data from the backend API
+  //This is also why we must click the browser refresh. So that we get here each time we want to see latest data.
   componentDidMount() {
     //console.log(`You are at componentDidMount`);
-    this.fetchValues();   //from redis, returns an object that looks like  values: { 1:1, 2:2, 3:3, 4:5, 5:8, 6:13 ... }
-    this.fetchIndexes();  //from postgres returns an array that looks like [1,2,3,4,5,6]
+    this.fetchRedisValues();   //from redis, returns an object that looks like  values: { 1:1, 2:2, 3:3, 4:5, 5:8, 6:13 ... }
+    this.fetchPostgresIndexes();  //from postgres returns an array that looks like [1,2,3,4,5,6]
     //this.fetchStuff();  //from no where in particular
   }
 
@@ -36,7 +37,7 @@ class Fib extends Component {
   //Where are these being saved and held permanently from session to session?
   // Somewhere in the container is where. So called in memory data.
   //If ever you delete the container, you get a new database.
-  async fetchValues() {
+  async fetchRedisValues() {
     const values = await axios.get('/api/values/current');
     this.setState({ values: values.data });
   }
@@ -47,9 +48,25 @@ class Fib extends Component {
   // this is pulling data from Postgres
   //Where are these being save and held?  Somewhere in the container is where.
   //If ever you delete the container, you get a new database.
-  async fetchIndexes() {
+  //Unless you have mapped the data to an external resource using volumes! 
+  // See lecture Section 14: A Multi-Container App with Kubernetes, The need for Volumes with Databases
+  async fetchPostgresIndexes() {
     const seenIndexes = await axios.get('/api/values/all');
     this.setState({ seenIndexes: seenIndexes.data });
+  }
+  
+  //I decided to make it possible to reset the data store myself
+  deletePostgressIndexes = async () => {
+    console.log('deletePostgressIndexes');
+    await axios.delete('/api/values/deletepostgres');
+    this.fetchPostgresIndexes();
+  }
+
+  //I decided to make it possible to reset the data store myself
+  deleteRedisIndexes = async () => {
+    console.log('deleteRedisIndexes');
+    await axios.delete('/api/values/deleteredis');
+    this.fetchRedisValues();
   }
 
   //index is coming from the form input field, and is used to make this a controlled form. onChange.
@@ -58,10 +75,9 @@ class Fib extends Component {
   handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (this.state.index === '')
-    {
-       alert("You must type an entry");
-       return;
+    if (this.state.index === '') {
+      alert("You must type an entry");
+      return;
     }
 
     const response = await axios.post('/api/values', {
@@ -131,11 +147,16 @@ class Fib extends Component {
           <button>Submit</button>
         </form>
 
-        <h3>Indexes I have seen:</h3>
+        <h3>Indexes (postgres data) I have seen:</h3>
         {this.renderSeenIndexes()}
 
-        <h3>Calculated Values:</h3>
+        <h3> (Redis data) Calculated Values:</h3>
         {this.renderValues()}
+
+        <button><h3 onClick={this.deletePostgressIndexes}>Reset Postgres database:</h3></button>
+
+        <button><h3 onClick={this.deleteRedisIndexes}>Reset Redis database:</h3></button>
+
       </div>
     );
   }
