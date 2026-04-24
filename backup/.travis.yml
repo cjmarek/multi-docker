@@ -16,7 +16,7 @@ before_install:
 script:
   - docker run -e CI=true react-test npm test
 after success:
-  # build images 
+  # build production images, (it will know to find and use the production Dockerfile(s) since they will be in the ./whatever context)
   - docker build -t cjmarek/my-first-repo:multi-client ./client
   - docker build -t cjmarek/my-first-repo:multi-nginx ./nginx
   - docker build -t cjmarek/my-first-repo:multi-server ./server
@@ -27,7 +27,7 @@ after success:
   # So for any images we pushed to docker hub, those images are already associated to my account.
   # To supply $DOCKER_PASSWORD" "$DOCKER_ID" from the following command line, You will set these up as environmental variables on the Travis site.
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  # Take those images and push them to docker hub
+  # Take those production images and push them to docker hub
   - docker push cjmarek/my-first-repo:multi-client
   - docker push cjmarek/my-first-repo:multi-nginx
   - docker push cjmarek/my-first-repo:multi-server

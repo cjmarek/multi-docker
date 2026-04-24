@@ -14,7 +14,7 @@ We did such a mapping with our docker-compose.yml file in Complex so that
 
 
 
-React by default is already listening on port 3000.
+React development server by default is already listening on port 3000.
 
 
 When ever I start up my development server for my photography React web site, I type 'npm run start'
@@ -28,7 +28,7 @@ You can now view photography in the browser.
 
 You must read PortMapping-localhost.txt
 
-It is telling me here, hey, I have mapped localhost to React port 3000
+It is telling me here, hey, I have mapped localhost to React development server port 3000
 so you must use http://localhost:3000 to bring up your application.
 Anything other than http://localhost:3000 will not work.
 
@@ -46,7 +46,7 @@ The root side nginx server default.conf only has two route rules:
 1) for invoking React when we are at a root route '/', and listens on port container 80.
 2) for invoking Express when we are at a root route '/api', and listens on container port 80.
 
-I do not know how the outside port is determined for the execution in production!
+I do not know/understand how the outside port is determined for the execution in production!
 
 In development, we are using 3050 as the outside port, and mapping 3050 to 80, so localhost:3050 is used when doing a development start up from the browser.
 

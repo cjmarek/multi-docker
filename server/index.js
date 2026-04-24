@@ -12,6 +12,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 //                     these values actually are being set in the docker-compose.yml
 console.log("* * * * * * * * * * * * * * * * * * * * * * console logs * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
+console.log(`This will show up at the terminal, not in chrome dev explorer`);
 console.log(`PostgreSQL redisHost: ${keys.redisHost}`);
 console.log(`PostgreSQL redisPort: ${keys.redisPort}`);
 console.log(`PostgreSQL pgUser: ${keys.pgUser}`);
@@ -23,7 +24,7 @@ console.log("* * * * * * * * * * * * * * * * * * * * * * console logs * * * * * 
 
 
 
-//app is the object that is going to recieve and to respond to any http requests
+//app is the object that is going to receive and to respond to any http requests
 //that are coming or going back to the React application. The React application is what makes the initial requests, but the request pass through Nginx first to get here.
 const app = express();
 
@@ -80,34 +81,32 @@ const redisClient = redis.createClient({
 //according to the redis documentation for this javascript library, 
 //if we ever have a client thats listening or publishing information (worker will be listening)
 //on redis, we have to make a duplicate connection that can not be used for other purposes.
-//We do this in both locations. (worker)
+//We do this in both locations. (worker, server)
 const redisPublisher = redisClient.duplicate();
 
 
-//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * Express route handlers
-//He says he wanted to make a test route as something we could use to make sure our application is working the way we expect, but then he never shows how to use it.
+//* * * * * * * * * *  Express route handlers (these route functions only execute when we are on the exact and you can have only one route handler for each route, so you can't have two '/' routes, but you can have one '/' and one '/values/all' and one '/values/current' etc. )
+//He says he wanted to make a 'test route' as something we could use to make sure our application is working the way we expect, but then he never shows how to use it.
 //I played around and figured it out.
 //The answer is to open the docker-compose.yml file, add a port mapping to the apifoo container service. (This is actually the Express 'server' folder > index.js) as follows:
 // ports:
 //   - '3050:5000'
 // And remove the 3050:80 port mapping from the nginx container service in the docker-compose.yml. (since you can't have 3050 mapped to two different ports at the same time)
 // then from the terminal submit  docker compose up --build
-//So now the Browser opens from http://localhost:3050 and this, the Express server, which is now listenning on port 5000, is watching since 3050 is now mapped to 5000, 
-// so the Browser displays 'Hi'.
+//So now the Browser opens from http://localhost:3050 (and refresh screen) and this, the Express server, which is now listenning on port 5000, is watching since 3050 is now mapped to 5000, 
+// so the Browser displays 'Hi blah blah blah'.
 app.get('/', (req, res) => {
   console.log(`This will show up at the terminal, not in chrome dev explorer`);
-  console.log(`This will never show up here because '/' is a route that nginx only sends to the React (client) side!!!!`);
+  console.log(`This will never show up here because '/' is a route that nginx only sends to the React (client) side when using 3050:80!!!!`);
   console.log(`So that you are given a React page to look at`);
-  console.log(`HOWEVER YOU WILL SEE THE CONSOLE LOGS BELOW! `);
-  res.send('Hi');
+  console.log(`HOWEVER YOU WILL SEE THE CONSOLE LOGS for each route function that executes! `);
+  res.send('Hi from test route (will show up at the browser, not in chrome dev explorer)');
 });
 
-//I tried to make the fib from React call this api, but, I never get here no matter what I tried. Just wanted to try.
-// app.get('/', async (req, res) => {
+//I was able to also make the fib from React call this api without the need to fuck with the port the way I did above. Just uncomment this code and comment out the above code.
+// app.get('/', (req, res) => {
 //   //I just stuck this on here to get a result
-//   const values = await pgClient.query("SELECT * from values");
 //   console.log(`Will I see this somewhere????`);
-//   res.send('Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii');
 // });
 
 //look at the values table and retrieve everything out of it
@@ -155,15 +154,17 @@ app.delete('/values/deleteredis', async (req, res) => {
 app.get('/values/current', async (req, res) => {
   console.log(`redisClient arrived at /values/current`);
   //look at a hash value inside the redis instance and get all the information from it
-  //NOTE: the redis library for node js doesn't have out of the box promise support
-  //which is why we are using a callback rather than making use of nice async await syntax.
+  //NOTE: Stephan says the redis library for node js doesn't have out of the box promise support
+  //which is why we are using a callback rather than making use of nice async await syntax. (so why do I see line 142 using async await????)
   redisClient.hgetall('values', (err, values) => {
     res.send(values);
   });
 });
 
-//The React app made a http request to  axios.post('/api/values'), that got intercepted by nginx, which then stripped off 'api' and that gets us here
-//new values from the react application
+//The React app made a http request to  axios.post('/api/values'), that got intercepted by nginx, which then stripped off 'api' and that gets us here.
+//new values from the react application.
+//We are writing the index value to the Postgres database in here. But then we are firing off a redis event here so that the worker side can also write a index to the redis database. 
+// So, we are instigating writing to both databases from here.
 app.post('/values', async (req, res) => {
 
   //extract index from the http request body
@@ -182,12 +183,12 @@ app.post('/values', async (req, res) => {
   //The purpose of this is to have something in the redis database the first time we run the application
   //so that there is something to put on the screen.
   //put index into redis data store.
-  //This is storing data as an object we called values...
+  //This is storing data as an object we named values...
   //  values: { foo:'Nothing yet' ... } where the key (foo) is any index you can think of at this point.
-  redisClient.hset('values', index, 'Nothing yet'); //so, do we need to do this in anticipation of doing line 157??? What if I leave this off???? If I leave it off, nothing bad happens.
+  redisClient.hset('values', index, 'Nothing yet'); //This is being done in case the worker process is not running yet, so that we have something in the redis database to show on the screen. The worker process will replace 'Nothing yet' with the actual fibinaci value when it runs. So, this is how we get the fibinaci value into redis, by firing off an event that the worker process is listening for.
 
-  //Is this how to fire off an event? Yes. Also, if you comment out 161, then you will see values: { foo:'Nothing yet' ... } where foo is the index you used (like 1 or 2 or 3).
-  //'message' is what gets sent over to the worker process, this is firing off worker process event handler for insert.
+  //Is this how to fire off an event? Yes. Also, if you comment out 194, then you will see values: { foo:'Nothing yet' ... } where foo is the index you used (like 1 or 2 or 3).
+  //'message' is what gets sent over to the worker process, this is firing off worker process event handler for insert. Worker will replace the 'Nothing yet' value with the actual fibinaci value. So, this is how we get the fibinaci value into redis, by firing off an event that the worker process is listening for.
   //'insert' could just as well be 'foo'. So, the worker container will react to this event and make an entry into the
   //redis database. At Line 49 index.js of the worker container is what this will trigger and then fibinaci is calculated and entered into Redis.
   redisPublisher.publish('insert', index);

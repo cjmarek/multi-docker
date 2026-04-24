@@ -18,7 +18,7 @@ const redisClient = redis.createClient({
 //according to the redis documentation for this javascript library, 
 //if we ever have a client thats listening or publishing information 
 //on redis, we have to make a duplicate connection that can not be used for other purposes.
-//We do this in both locations. (worker)
+//We do this in both locations. (worker, server)
 const redisPublisher = redisClient.duplicate();
 
 

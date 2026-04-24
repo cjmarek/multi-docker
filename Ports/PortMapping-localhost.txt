@@ -1,0 +1,46 @@
+I just found out that whenever you say localhost:3000, the 3000 mentioned here is in fact the port of the Application that you are running, and is listening on, 
+such as a React dev server. Until now, I was unsure if the localhost:3000 was just the so called outside port, that was somehow paired up with the default 
+port 3000 that React's development server uses to listen on. 
+
+As it turns out, localhost can also be written as 172.0.0.1, and you can do 172.0.0.1:3000. So 172.0.0.1 is the outside port. (also known as a I.P address).
+
+Also,  172.0.0.1 and 3000 are both on the same network.  172.0.0.1 can share network traffic with 3000.
+
+This discovery came from lecture Section 13: Maintaining Sets of containers with Deployments, 198 Why use services video at 3:29
+
+An even bigger clue is what you see when you start up a React application
+
+When ever I start up my development server for my photography React web site, I type 'npm run start'
+
+You don't need to declare the listening port for the React dev server since it is 3000 by default.
+
+So now that you have executed the 'npm run start', you have the dev server waiting and listening for traffic from 10.6.19.43 (which
+
+is the same thing as localhost). 
+
+The 'outside' network in this example is 10.6.19.43, which is where requests will be coming from (essentially a browser)
+
+And I get the following output at the terminal. . . 
+
+You can now view photography in the browser.
+
+  Local:            http://localhost:3000
+  On Your Network:  http://10.6.19.43:3000   <--------------------  Yes, the 3000 is in fact the port for the React development server.
+
+So all of the above is true from the context of running the React Development Server on the same network as localhost.
+
+
+
+
+Ok, so what about if you have the development server for React running inside a container? How do you get localhost traffic into the container?
+
+Or maybe you have a node.js server running inside a container? How do you get localhost traffic into the container?
+
+
+Well, find out the port that the containerized app is listening on? It can be any available port, lets say if the container app is listening on port 8085,
+
+you will need to route outside traffic (localhost traffic) to the container at run time (When you submit the docker run command)
+
+docker -p 3000:8085 123456789   or   docker -p 3001:8085 123456789    or    docker -p 3002:8085 123456789
+
+So you have to invent a whole new port number to use that will represent the outside port for purposes of mapping outside traffic to inside a container.

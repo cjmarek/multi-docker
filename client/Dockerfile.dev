@@ -7,3 +7,28 @@ COPY . .
 # default commands that we always use for applications created from React App
 # Default start command, will start up a development server. So that is why this is not a good thing for a production environment
 CMD ["npm", "run", "start"] 
+
+#   What follows (lines 23 thru 25) is how to launch the React development web server. You can use any port for the left of :, 
+#   and NOTE! You will get the usual terminal output saying the following:
+#
+#Compiled successfully!
+#
+#You can now view whatever in the browser.
+#
+#  Local:            http://localhost:3000
+#  On Your Network:  http://172.17.0.2:3000
+#
+#  But since the React development server is running inside a container on port 3000, you will need to use port mapping to get outside traffic over to port 3000
+#
+# cd client
+# docker build -f Dockerfile.dev .
+# docker run -p 4000:3000   [image id (from the build you just did)]
+# CMD ["npm", "run", "start"] <--- the React dev server will be running now because of this default command,  
+# React development server uses port 3000 by default, so now, we can actually run this with docker run -p 4000:3000 [image id] using React dev web server http://localhost:4000 as a test
+# NOTE: You will get errors as a result of the postgres and Redis servers not being available (since those are in their own containers as they are not running yet)
+
+# You absolutely must read my port mapping comments inside Dockerfile and inside Dockerfile.dev. The main confusion is that you can have Reacts development server start up, and it 
+# will tell you to use http://localhost:3000 which is actually inside the container. So then you must use port mapping. And if by choice, you set up mapping ports 3000:3000, then you 
+# do end up using http://localhost:3000 at the browser. But NOT because of the React development servers admonition that you should. So confusing if you don't think it through. And
+# you need to think it through to understand what you are doing.
+

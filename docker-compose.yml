@@ -28,7 +28,7 @@ services:
       context: ./nginx
     # localhost 3050 will be reaching port 80 on nginx (see default.conf). ports mentioned in this compose file determine the mapping. ports mentioned when using 'docker run -p 3050:80 [image id]' determine the mapping.
     ports:
-      - '3050:80'
+     - '3050:80'
   apifoo:
     #ports:
     # - '3050:5000'
@@ -43,7 +43,7 @@ services:
     # These default values came from the documentation out on Docker hub for the postgres repository and redis repository. 
     # The actual environment settings were defined in server>keys.js, 
     # So, for example in the keys.js file, where you see process.env.REDIS_HOST, we are setting process.env.REDIS_HOST to be redis (fyi we got redis from line 17)
-    # in the keys.js file, where you see process.env.REDIS_PORT, we are setting process.env.REDIS_PORT to be 6379  etc etc. He pull out of thin air the rest of these by saying they are defaults WTF
+    # In the keys.js file, where you see process.env.REDIS_PORT, we are setting process.env.REDIS_PORT to be 6379  etc etc. He pulls out of thin air the rest of these by saying they are defaults WTF
     # The values come from here and go over there.
     # These default values came from the documentation out on Docker hub for the postgres repository and redis repository. The actual environment settings were defined in server>keys.js
     # Grider got these values over in the docker hub documentation (some of them he actually could not find, and just flat out said them out loud)

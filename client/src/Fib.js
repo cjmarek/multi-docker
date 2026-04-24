@@ -15,6 +15,7 @@ class Fib extends Component {
   };
   //kicks in the instant the Fib component is rendered on the screen. Fetch some data from the backend API
   //This is also why we must click the browser refresh. So that we get here each time we want to see latest data.
+  //Using the useState hook would be a more modern approach (thus automatically causing a re-render), but we are using class components here.
   componentDidMount() {
     //console.log(`You are at componentDidMount`);
     this.fetchRedisValues();   //from redis, returns an object that looks like  values: { 1:1, 2:2, 3:3, 4:5, 5:8, 6:13 ... }
@@ -36,7 +37,8 @@ class Fib extends Component {
   //The data returned is a values.data object, the object has properties that are the indexes. The indexes are keys with values that are fibinaci results.
   //Where are these being saved and held permanently from session to session?
   // Somewhere in the container is where. So called in memory data.
-  //If ever you delete the container, you get a new database.
+  //If ever you delete the container, you get a new database. I decided to make it possible to reset the data store myself, so I added a button that calls deleteRedisIndexes, 
+  // which makes a delete request to the Express server, which then deletes the data in Redis. See server/index.js for the api endpoint that handles this request.
   async fetchRedisValues() {
     const values = await axios.get('/api/values/current');
     this.setState({ values: values.data });
@@ -68,6 +70,11 @@ class Fib extends Component {
     await axios.delete('/api/values/deleteredis');
     this.fetchRedisValues();
   }
+  //Just a test to see if I can make a request to the backend Express server using a route that the back end normally never sees ('/')
+  playingAround = async () => {
+    console.log('playingAround');
+    await axios.get('/api/');
+  }
 
   //index is coming from the form input field, and is used to make this a controlled form. onChange.
   //When the form is submitted, index gets posted to api/values, which is an object made up of properties for each index.
@@ -79,26 +86,27 @@ class Fib extends Component {
       alert("You must type an entry");
       return;
     }
-
+    // This will make a http request to the Express server. The Express server will have an api endpoint that matches this path and method (post /api/values). See server/index.js for the api endpoint that handles this request.
+    // This will result in making an entry into both the Postgres and Redis databases. See server/index.js for the api endpoint that handles this request, and see worker/index.js for how the Redis entry gets made.
     const response = await axios.post('/api/values', {
       index: this.state.index,
     });
     //debugger;
     //see ConsoleLogFromReactApp.png for where this console log output went to.
-    //The Express server at line 172 of index.js   res.send({ working: true });
+    //The Express server at line 205 of index.js   res.send({ working: true });
     //So that is where we get working: true back here as a response.
     console.log(`* * * * * * * * * * The response came back as ${response.data.working} * * * * * * * * * * `)
     this.setState({ index: '' });
   };
 
-  renderSeenIndexes() {
+  renderPostgresSeenIndexes() {
     //debugger;
     return this.state.seenIndexes.map(({ number }) => number).join(', ');
   }
 
   //Its ok to mutate state the when that state is not used in props or application state
   //Here, entries is only used for display, so it can be mutated using push and not cause problems
-  renderValues() {
+  renderRedisValues() {
     const entries = [];
     //debugger;
     //this.state.values is an object, not an array. To iterate the properties
@@ -133,7 +141,7 @@ class Fib extends Component {
 
     return entries;
   }
-  // Notice how the handler for onChange is an inline function! (instead of the conventional function we used at onSubmit)
+  // Notice how the handler for onChange is an inline function! (instead of the conventional function such as we used at onSubmit)
   render() {
     return (
       <div>
@@ -148,15 +156,16 @@ class Fib extends Component {
         </form>
 
         <h3>Indexes (postgres data) I have seen:</h3>
-        {this.renderSeenIndexes()}
+        {this.renderPostgresSeenIndexes()}
 
         <h3> (Redis data) Calculated Values:</h3>
-        {this.renderValues()}
+        {this.renderRedisValues()}
 
         <button><h3 onClick={this.deletePostgressIndexes}>Reset Postgres database:</h3></button>
 
         <button><h3 onClick={this.deleteRedisIndexes}>Reset Redis database:</h3></button>
 
+        {/* <button><h3 onClick={this.playingAround}>Playing Around</h3></button> */}
       </div>
     );
   }
